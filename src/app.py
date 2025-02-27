@@ -1,5 +1,4 @@
 import streamlit as st
-from dotenv import load_dotenv
 from langchain_core.messages import AIMessage
 
 from agent.copy_generator import CopyGenerator
@@ -9,9 +8,7 @@ from models.grounding_llm import GroundingLLM
 from models.llm import LLM
 from utils.app_util import display_message, display_messages
 
-load_dotenv()
-
-MODEL = "gemini"
+MODEL = "claude-3-5"
 THREAD_ID = "1"
 TEMPERATURE = 0.2
 

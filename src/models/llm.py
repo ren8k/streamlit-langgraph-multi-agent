@@ -1,8 +1,7 @@
-import vertexai
 from langchain_core.language_models import BaseChatModel
 from langchain_core.language_models.base import LanguageModelInput
 from langchain_core.messages import BaseMessage
-from langchain_google_vertexai import ChatVertexAI
+from langchain_aws import ChatBedrock
 
 
 class LLM:
@@ -10,9 +9,12 @@ class LLM:
         self.model = self._initialize_llm(model_name, temperature)
 
     def _initialize_llm(self, model_name: str, temperature: float) -> BaseChatModel:
-        if model_name == "gemini":
-            vertexai.init()
-            return ChatVertexAI(model="gemini-2.0-flash", temperature=temperature)
+        if model_name == "claude-3-5":
+            return ChatBedrock(
+                model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+                temperature=temperature,
+                region="us-west-2",
+            )
         else:
             raise ValueError(f"Model name {model_name} not supported.")
 
