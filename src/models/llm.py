@@ -1,7 +1,7 @@
+from langchain_aws import ChatBedrockConverse
 from langchain_core.language_models import BaseChatModel
 from langchain_core.language_models.base import LanguageModelInput
 from langchain_core.messages import BaseMessage
-from langchain_aws import ChatBedrock
 
 
 class LLM:
@@ -10,10 +10,10 @@ class LLM:
 
     def _initialize_llm(self, model_name: str, temperature: float) -> BaseChatModel:
         if model_name == "claude-3-5":
-            return ChatBedrock(
+            return ChatBedrockConverse(
                 model="anthropic.claude-3-5-sonnet-20241022-v2:0",
+                region_name="us-west-2",
                 temperature=temperature,
-                region="us-west-2",
             )
         else:
             raise ValueError(f"Model name {model_name} not supported.")
