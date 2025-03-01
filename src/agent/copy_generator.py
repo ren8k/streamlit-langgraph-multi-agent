@@ -15,7 +15,7 @@ class CopyGenerator:
         graph_builder = StateGraph(AgentState)
         graph_builder.add_node(self.copy_generate)
         graph_builder.add_node(self.copy_improvement)
-        graph_builder.add_node(self.post_process)
+        graph_builder.add_node(self.post_process)  # TODO: 削除
 
         graph_builder.set_entry_point("copy_generate")
         graph_builder.add_edge("copy_generate", "copy_improvement")
@@ -79,7 +79,7 @@ class CopyGenerator:
 
         return {
             "messages": response,
-            "copy": response.content,
+            "copy": response.content,  # TODO: 削除
             "display_message_dict": display_message_dict,
         }
 
