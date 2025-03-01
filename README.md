@@ -27,13 +27,9 @@ pip install -r requirements.txt
 ```
 
 ### 4. 環境変数の設定
-#### Gemini利用の場合
-1. サービスアカウントキーを取得  
-「Vertex AI 管理者」の権限を持つ[サービスアカウントキーを取得](https://cloud.google.com/iam/docs/keys-create-delete?hl=ja#creating)し、`vertexai-credentials.json` という名前で`.env`と同じディレクトリに配置する。
-2. `.env.example` をコピーして `.env` を作成する。`GOOGLE_APPLICATION_CREDENTIALS=./vertexai-credentials.json`部分はそのままで良い。
-```bash
-cp .env.example .env
-```
+#### Bedrock利用の場合
+Bedrockを利用する場合、オレゴンリージョンでのモデル（Claude 3.5 Sonnet v2）の有効化と、IAMアクセスキーの発行およびAWS CLIの設定が必要である。  
+（EC2上で実行する場合は必要なポリシーをアタッチすればよい。）
 
 ### 5. Streamlitアプリの起動
 `src`ディレクトリに移動し、以下のコマンドを実行する。
