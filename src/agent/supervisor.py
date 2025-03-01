@@ -82,11 +82,14 @@ class Supervisor:
                 )
                 invoke_result = json.loads(tool_response.content)
 
+            # for bedrock
+            content = response.content[0]["text"]
+
             display_message_dict = {
                 "role": "assistant",
                 "title": "Supervisorの思考が完了しました。",
                 "icon": "👨‍🏫",
-                "content": response.content,
+                "content": content,
             }
 
             return Command(
