@@ -5,36 +5,11 @@ from langchain_core.tools.base import InjectedToolCallId
 
 
 @tool
-def handoff_to_web_searcher(
-    search_query: Annotated[
-        str,
-        "ユーザーが検索したい内容が記載されたテキスト",
-    ],
-    tool_call_id: Annotated[str, InjectedToolCallId],
-) -> dict:
-    """
-    ユーザーが検索したい内容を受け取り、web_searcherに引き継ぎます。
-    ユーザーが検索を必要としている場合、このツールを呼び出します。
-
-    web_searcherの役割は以下の通り
-    - ユーザーの要望に基づいてWeb検索を行い、その結果を整理して返します。
-    """
-    print("## Called Web Searcher")
-
-    tool_msg = {
-        "role": "tool",
-        "content": "Successfully transferred to Web Searcher.",
-        "tool_call_id": tool_call_id,
-    }
-
-    return {
-        "goto": "web_searcher_subgraph",
-        "update": {"messages": [tool_msg], "search_query": search_query},
-    }
-
-
-@tool
 def handoff_to_copy_generator(
+    copy_request: Annotated[
+        str,
+        "コピー生成の要求。どのようなコピー文を生成すべきかという内容が記載されている。",
+    ],
     tool_call_id: Annotated[str, InjectedToolCallId],
 ) -> dict:
     """
@@ -54,5 +29,34 @@ def handoff_to_copy_generator(
 
     return {
         "goto": "copy_generator_subgraph",
+        "update": {"messages": [tool_msg]},
+    }
+
+
+@tool
+def handoff_to_image_generator(
+    visual_concept: Annotated[
+        str,
+        "画像の主題（ビジュアルコンセプト）。どのような画像を生成すべきかという内容が記載されている。",
+    ],
+    tool_call_id: Annotated[str, InjectedToolCallId],
+) -> dict:
+    """
+    画像生成を行うために、image_generatorに引き継ぎます。
+    ユーザーが画像生成を要望している場合、このツールを呼び出します。
+
+    image_generatorの役割は以下の通り
+    - 画像の主題（ビジュアルコンセプト）に基づいて画像を生成します
+    """
+    print("## Called Image Generator")
+
+    tool_msg = {
+        "role": "tool",
+        "content": "Successfully transferred to Image Generator.",
+        "tool_call_id": tool_call_id,
+    }
+
+    return {
+        "goto": "image_generator_subgraph",
         "update": {"messages": [tool_msg]},
     }

@@ -1,14 +1,15 @@
 import streamlit as st
-from langchain_core.messages import AIMessage
+from langchain_core.messages import HumanMessage
 
 from agent.copy_generator import CopyGenerator
+from agent.image_generator import ImageGenerator
 from agent.supervisor import Supervisor
-from agent.web_searcher import WebSearcher
-from models.grounding_llm import GroundingLLM
+from models.bedrock_img_gen_model import BedrockImageModel
 from models.llm import LLM
 from utils.app_util import display_message, display_messages
 
 MODEL = "claude-3-5"
+IMG_GEN_MODEL = "nova-canvas"
 THREAD_ID = "1"
 TEMPERATURE = 0.2
 
@@ -23,11 +24,12 @@ def main() -> None:
 
     # Init Actors
     llm = LLM(MODEL, TEMPERATURE)
-    grounding_llm = GroundingLLM()
+    bedrock_image_model = BedrockImageModel(IMG_GEN_MODEL)
 
     copy_generator = CopyGenerator(llm)
-    web_searcher = WebSearcher(grounding_llm)
-    supervisor = Supervisor(llm, copy_generator, web_searcher)
+    image_generator = ImageGenerator(llm, bedrock_image_model)
+
+    supervisor = Supervisor(llm, copy_generator, image_generator)
 
     # Session State
     if "is_start_chat" not in st.session_state:
@@ -41,8 +43,8 @@ def main() -> None:
             こんにちは！何かお手伝いできることはありますか？
             以下の機能を利用することができます。
 
-            - Web検索
             - コピー生成
+            - 画像生成
             """,
         }
         st.session_state.display_messages = [init_display_message_dict]
@@ -68,8 +70,10 @@ def main() -> None:
         st.stop()
 
     # Core Algorithm
-    inputs = {"messages": st.session_state.messages + [AIMessage(user_input)]}
+    inputs = {"messages": st.session_state.messages + [HumanMessage(user_input)]}
     config = {"configurable": {"thread_id": THREAD_ID}}
+
+    supervisor.write_mermaid_graph()
 
     event_prev = {}
     for event in supervisor.graph.stream(

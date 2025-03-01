@@ -6,38 +6,38 @@ from langgraph.types import Command
 from typing_extensions import Literal
 
 from agent.copy_generator import CopyGenerator
+from agent.image_generator import ImageGenerator
 from agent.state import AgentState
-from agent.tools import handoff_to_copy_generator, handoff_to_web_searcher
-from agent.web_searcher import WebSearcher
+from agent.tools import handoff_to_copy_generator, handoff_to_image_generator
 from models.llm import LLM
 
 
 class Supervisor:
     def __init__(
-        self, llm: LLM, copy_generator: CopyGenerator, web_searcher: WebSearcher
+        self, llm: LLM, copy_generator: CopyGenerator, image_generator: ImageGenerator
     ) -> None:
-        self.tools = [handoff_to_web_searcher, handoff_to_copy_generator]
+        self.tools = [handoff_to_copy_generator, handoff_to_image_generator]
         self.tools_by_name = {tool.name: tool for tool in self.tools}
         self.llm_with_tools = llm.model.bind_tools(self.tools)
-        self.graph = self.build_graph(copy_generator, web_searcher)
+        self.graph = self.build_graph(copy_generator, image_generator)
 
     def build_graph(
-        self, copy_generator: CopyGenerator, web_searcher: WebSearcher
+        self, copy_generator: CopyGenerator, image_generator: ImageGenerator
     ) -> CompiledStateGraph:
         graph_builder = StateGraph(AgentState)
         graph_builder.add_node(self.supervisor)
         graph_builder.add_node("copy_generator_subgraph", copy_generator.graph)
-        graph_builder.add_node("web_searcher_subgraph", web_searcher.graph)
+        graph_builder.add_node("image_generator_subgraph", image_generator.graph)
         graph_builder.add_node(self.end_node)
         graph_builder.add_edge("copy_generator_subgraph", "supervisor")
-        graph_builder.add_edge("web_searcher_subgraph", "supervisor")
+        graph_builder.add_edge("image_generator_subgraph", "supervisor")
         graph_builder.set_entry_point("supervisor")
         return graph_builder.compile()
 
     def supervisor(self, state: AgentState) -> Command[
         Literal[
             "copy_generator_subgraph",
-            "web_searcher_subgraph",
+            "image_generator_subgraph",
             "end_node",
         ]
     ]:
@@ -69,6 +69,9 @@ class Supervisor:
             ]
         )
 
+        print(response)
+
+        # tool messageをメッセージに追加
         state["messages"].append(response)
 
         if len(response.tool_calls) > 0:
@@ -120,7 +123,7 @@ class Supervisor:
     # ================
     # Helper
     # ================
-    def write_mermaid_graph(self, graph: CompiledStateGraph) -> None:
+    def write_mermaid_graph(self) -> None:
         print("Writing graph.md")
         with open("graph.md", "w") as file:
-            file.write(f"```mermaid\n{graph.get_graph(xray=1).draw_mermaid()}```")
+            file.write(f"```mermaid\n{self.graph.get_graph(xray=1).draw_mermaid()}```")
