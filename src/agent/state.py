@@ -14,7 +14,6 @@ class AgentState(TypedDict):
 
     theme_copy: str
     draft_copy: str
-    search_query: str
 
     is_finished: bool
     display_message_dict: DisplayMessageDict
