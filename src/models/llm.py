@@ -9,14 +9,17 @@ class LLM:
         self.model = self._initialize_llm(model_name, temperature)
 
     def _initialize_llm(self, model_name: str, temperature: float) -> BaseChatModel:
-        if model_name == "claude-3-5":
-            return ChatBedrockConverse(
-                model="anthropic.claude-3-5-sonnet-20241022-v2:0",
-                region_name="us-west-2",
-                temperature=temperature,
-            )
+        if model_name == "claude-3-7-sonnet":
+            model_id = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+        elif model_name == "claude-3-5-haiku":
+            model_id = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
         else:
             raise ValueError(f"Model name {model_name} not supported.")
+        return ChatBedrockConverse(
+            model=model_id,
+            region_name="us-west-2",
+            temperature=temperature,
+        )
 
     def __call__(self, input: LanguageModelInput) -> BaseMessage:
         """LLMの呼び出し"""
