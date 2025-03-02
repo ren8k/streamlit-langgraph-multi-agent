@@ -31,11 +31,14 @@ class CopyGenerator:
                     "あなたはプロのコピーライターです。",
                 )
             ]
-            + state["messages"]
             + [
                 (
                     "human",
-                    "会話の内容をもとにキャッチコピーを1つ生成してください。結果のみ出力してください。",
+                    f"""以下のテーマで、キャッチコピーを1つ生成してください。必ず結果のみ出力してください。
+                    <theme_copy>
+                    {state['theme_copy']}
+                    </theme_copy>
+                    """,
                 )
             ]
         )
@@ -49,7 +52,7 @@ class CopyGenerator:
 
         return {
             "messages": response,
-            "copy": response.content,
+            "draft_copy": response.content,
             "display_message_dict": display_message_dict,
         }
 
@@ -61,11 +64,14 @@ class CopyGenerator:
                     "あなたはプロのコピーライターです。",
                 )
             ]
-            + state["messages"]
             + [
                 (
                     "human",
-                    "1つのキャッチコピーを改善してください。結果のみ出力してください。",
+                    f"""多角的な観点で、以下のキャッチコピーを改善してください。必ず結果のみ出力してください。
+                    <draft_copy>
+                    {state['draft_copy']}
+                    </draft_copy>
+                    """,
                 )
             ]
         )
@@ -79,7 +85,6 @@ class CopyGenerator:
 
         return {
             "messages": response,
-            "copy": response.content,  # TODO: 削除
             "display_message_dict": display_message_dict,
         }
 

@@ -6,9 +6,9 @@ from langchain_core.tools.base import InjectedToolCallId
 
 @tool
 def handoff_to_copy_generator(
-    copy_request: Annotated[
+    theme_copy: Annotated[
         str,
-        "コピー生成の要求。どのようなコピー文を生成すべきかという内容が記載されている。",
+        "コピーのテーマ。どのようなコピー文を生成すべきかという内容が記載されている。",
     ],
     tool_call_id: Annotated[str, InjectedToolCallId],
 ) -> dict:
@@ -29,7 +29,10 @@ def handoff_to_copy_generator(
 
     return {
         "goto": "copy_generator_subgraph",
-        "update": {"messages": [tool_msg]},
+        "update": {
+            "messages": [tool_msg],
+            "theme_copy": theme_copy,
+        },
     }
 
 
