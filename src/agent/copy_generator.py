@@ -15,12 +15,10 @@ class CopyGenerator:
         graph_builder = StateGraph(AgentState)
         graph_builder.add_node(self.copy_generate)
         graph_builder.add_node(self.copy_improvement)
-        graph_builder.add_node(self.post_process)  # TODO: 削除
 
         graph_builder.set_entry_point("copy_generate")
         graph_builder.add_edge("copy_generate", "copy_improvement")
-        graph_builder.add_edge("copy_improvement", "post_process")
-        graph_builder.set_finish_point("post_process")
+        graph_builder.set_finish_point("copy_improvement")
         return graph_builder.compile()
 
     def copy_generate(self, state: AgentState) -> dict:
@@ -86,11 +84,4 @@ class CopyGenerator:
         return {
             "messages": response,
             "display_message_dict": display_message_dict,
-        }
-
-    def post_process(self, state: AgentState) -> dict:
-        message = AIMessage("コピー生成が完了しました。")
-        return {
-            "messages": message,
-            "display_message_dict": None,
         }
