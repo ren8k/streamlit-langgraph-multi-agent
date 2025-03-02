@@ -12,7 +12,8 @@ class DisplayMessageDict(TypedDict):
 class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
 
-    copy: str
+    theme_copy: str
+    draft_copy: str
     search_query: str
 
     is_finished: bool
