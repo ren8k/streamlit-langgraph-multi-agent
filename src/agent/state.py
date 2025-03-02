@@ -1,5 +1,5 @@
 from langgraph.graph.message import add_messages
-from typing_extensions import Annotated, Literal, TypedDict
+from typing_extensions import Annotated, Literal, NotRequired, TypedDict
 
 
 class DisplayMessageDict(TypedDict):
@@ -7,6 +7,7 @@ class DisplayMessageDict(TypedDict):
     title: str
     icon: str
     content: str
+    images: NotRequired[list[str]]
 
 
 class AgentState(TypedDict):

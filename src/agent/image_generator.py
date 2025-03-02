@@ -65,7 +65,15 @@ class ImageGenerator:
         images = self.bedrock_image_model.extract_content(response)
         images_b64 = [convert_img_2_base64(image) for image in images]
 
+        display_message_dict = {
+            "role": "assistant",
+            "title": "Image Generatorの画像生成結果",
+            "icon": "🖼️",
+            "content": "画像生成が完了しました。",
+            "images": images_b64,
+        }
+
         return {
             "messages": AIMessage("画像生成が完了しました。"),
-            "display_message_dict": None,
+            "display_message_dict": display_message_dict,
         }
