@@ -17,10 +17,10 @@ TEMPERATURE = 0.2
 def main() -> None:
     # Page Config
     st.set_page_config(
-        page_title="Streamlit×LangGraph MultiAgent | コピー生成アプリケーション",
+        page_title="Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション",
         page_icon="🤖",
     )
-    st.title("Streamlit×LangGraph MultiAgent | コピー生成アプリケーション")
+    st.title("Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション")
 
     # Init Actors
     llm = LLM(MODEL, TEMPERATURE)
