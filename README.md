@@ -1,6 +1,6 @@
-# Streamlit × LangGraph Supervisor型マルチエージェント 広告コピー文生成アプリケーション
+# Streamlit × LangGraph Supervisor型マルチエージェント 広告素材生成アプリケーション
 
-本レポジトリでは、StreamlitとLangGraphを用いた、Supervisor型マルチエージェントによる簡易的な広告コピー文生成アプリのサンプルコードを公開している。
+本レポジトリでは、StreamlitとLangGraphを用いた、Supervisor型マルチエージェントによる簡易的な広告素材生成アプリのサンプルコードを公開している。
 
 [![デモ動画](./images/demo_movie.gif)](./images/demo_movie.gif)
 
@@ -26,9 +26,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. 環境変数の設定
-#### Bedrock利用の場合
-Bedrockを利用する場合、オレゴンリージョンでのモデル（Claude 3.5 Sonnet v2）の有効化と、IAMアクセスキーの発行およびAWS CLIの設定が必要である。  
+### 4. Bedrockの設定
+オレゴンリージョンでのモデル（Claude 3.7 Sonnet or Claude 3.5 haiku）の有効化と、IAMアクセスキーの発行およびAWS CLIの設定が必要である。  
 （EC2上で実行する場合は必要なポリシーをアタッチすればよい。）
 
 ### 5. Streamlitアプリの起動
@@ -50,24 +49,22 @@ graph TD;
 	supervisor(supervisor)
 	copy_generator_subgraph_copy_generate(copy_generate)
 	copy_generator_subgraph_copy_improvement(copy_improvement)
-	copy_generator_subgraph_post_process(post_process)
-	web_searcher_subgraph_web_search(web_search)
-	web_searcher_subgraph_post_process(post_process)
+	image_generator_subgraph_create_image_generation_prompt(create_image_generation_prompt)
+	image_generator_subgraph_generate_image(generate_image)
 	end_node(end_node)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> supervisor;
-	copy_generator_subgraph_post_process --> supervisor;
-	web_searcher_subgraph_post_process --> supervisor;
+	copy_generator_subgraph_copy_improvement --> supervisor;
+	image_generator_subgraph_generate_image --> supervisor;
 	supervisor -.-> copy_generator_subgraph_copy_generate;
-	supervisor -.-> web_searcher_subgraph_web_search;
+	supervisor -.-> image_generator_subgraph_create_image_generation_prompt;
 	supervisor -.-> end_node;
 	end_node -.-> __end__;
 	subgraph copy_generator_subgraph
 	copy_generator_subgraph_copy_generate --> copy_generator_subgraph_copy_improvement;
-	copy_generator_subgraph_copy_improvement --> copy_generator_subgraph_post_process;
 	end
-	subgraph web_searcher_subgraph
-	web_searcher_subgraph_web_search --> web_searcher_subgraph_post_process;
+	subgraph image_generator_subgraph
+	image_generator_subgraph_create_image_generation_prompt --> image_generator_subgraph_generate_image;
 	end
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
@@ -77,11 +74,12 @@ graph TD;
 ### アプリの機能
 Supervisorは以下2つの機能を持つエージェントを管理しており、ユーザーからの要望に応じて各エージェントに指示を出す。
 
-1. **Web検索エージェント**: ユーザが入力したキーワードに基づいて、Web検索を行う。
-    - SupervisorにWeb検索を要望すると、Web SearcherエージェントがWeb検索を行う。
-2. **コピー文生成エージェント**: ユーザが入力したキーワードに基づいて、コピー文を生成する。
+1. **コピー文生成エージェント**: キーワードに基づいて、コピー文を生成する。
     - Supervisorにコピー生成を要望すると、Copy Generatorエージェントがコピー文を生成する。
     - Copy Generatorエージェントは、一度コピーを生成したあとコピー文を自身で改善する。
+2. **画像生成エージェント**: 画像の主題（ビジュアルコンセプト）に基づいて、画像を生成する。
+		- Supervisorに画像生成を要望すると、Image Generatorエージェントが画像生成用プロンプトを作成する。
+		- Image Generatorエージェントは、作成したプロンプトを元に画像を生成する。
 
 ## ディレクトリ構成
 `src`ディレクトリ配下の主要なディレクトリ構成は以下の通りである。
@@ -89,17 +87,15 @@ Supervisorは以下2つの機能を持つエージェントを管理しており
 src                          
 ├── agent                    
 │   ├── copy_generator.py    # コピー生成エージェント
+│   ├── image_generator.py   # 画像生成エージェント
 │   ├── state.py             # エージェントの状態管理
 │   ├── supervisor.py        # Supervisorエージェント
-│   ├── tools.py             # Supervisorエージェントが使用するツール
-│   └── web_searcher.py      # Web検索エージェント
-├── app.py                   # Streamlitアプリのメインロジック
+│   └── tools.py             # Supervisorエージェントが使用するツール
+├── app.py                   # アプリのメインロジック
 ├── models                   
-│   ├── grounding_llm.py     # グラウンディングLLM定義(Gemini)
+│   ├── bedrock_img_gen_model.py  # 画像生成モデル（Bedrock）
 │   └── llm.py               # LLMモデル定義
 └── utils                    
-    └── app_util.py          # Streamlitユーティリティ関数
+    ├── app_util.py          # Streamlit用ユーティリティ関数
+    └── img_util.py          # 画像処理ユーティリティ関数
 ```
-
-## その他
-- `graph.md` は、LangGraphのグラフ構造をMermaid形式で記述したもの。Mermaid対応のエディタやツールで開くことで、グラフを視覚的に確認できる。
