@@ -8,7 +8,7 @@ from models.bedrock_img_gen_model import BedrockImageModel
 from models.llm import LLM
 from utils.app_util import display_message, display_messages
 
-MODEL = "claude-3-5-haiku"
+MODEL = "claude-3-7-sonnet"
 IMG_GEN_MODEL = "nova-canvas"
 THREAD_ID = "1"
 TEMPERATURE = 0.2

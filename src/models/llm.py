@@ -1,14 +1,26 @@
+from typing import Literal, TypeAlias
+
 from langchain_aws import ChatBedrockConverse
 from langchain_core.language_models import BaseChatModel
 from langchain_core.language_models.base import LanguageModelInput
 from langchain_core.messages import BaseMessage
 
+MODEL_NAME_TYPE: TypeAlias = Literal["claude-3-7-sonnet", "claude-3-5-haiku"]
+
 
 class LLM:
-    def __init__(self, model_name: str, temperature: float):
+    def __init__(
+        self,
+        model_name: MODEL_NAME_TYPE,
+        temperature: float,
+    ):
         self.model = self._initialize_llm(model_name, temperature)
 
-    def _initialize_llm(self, model_name: str, temperature: float) -> BaseChatModel:
+    def _initialize_llm(
+        self,
+        model_name: MODEL_NAME_TYPE,
+        temperature: float,
+    ) -> BaseChatModel:
         if model_name == "claude-3-7-sonnet":
             model_id = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
         elif model_name == "claude-3-5-haiku":
