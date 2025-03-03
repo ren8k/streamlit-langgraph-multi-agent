@@ -19,6 +19,8 @@ def main() -> None:
     st.set_page_config(
         page_title="Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション",
         page_icon="🤖",
+        layout="wide",
+        initial_sidebar_state="auto",
     )
     st.title("Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション")
 
