@@ -1,3 +1,4 @@
+from langchain_core.messages import AIMessage
 from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
@@ -32,11 +33,16 @@ class ImageGenerator:
                     "あなたは画像生成AI用のテキストプロンプトを作成する一流のプロンプトエンジニアです。",
                 )
             ]
-            + state["messages"]
             + [
                 (
                     "human",
-                    "画像の主題（ビジュアルコンセプト）を基に、画像生成AIに広告画像を生成させるための英語プロンプトを作成してください。結果のみ出力してください。",
+                    f"""
+                    画像の主題（ビジュアルコンセプト）を基に、画像生成AIに広告画像を生成させるための英語プロンプトを作成してください。
+                    結果のみ出力してください。
+                    <visual_concept>
+                    {state['visual_concept']}
+                    </visual_concept>
+                    """,
                 )
             ]
         )
@@ -50,17 +56,24 @@ class ImageGenerator:
 
         return {
             "messages": response,
+            "img_prompt": response.content,
             "display_message_dict": display_message_dict,
         }
 
     def generate_image(self, state: AgentState) -> dict:
-        response = self.bedrock_image_model(state["copy"], n=2)
+        response = self.bedrock_image_model(state["img_prompt"], n=2)
         images = self.bedrock_image_model.extract_content(response)
         images_b64 = [convert_img_2_base64(image) for image in images]
 
-        print(images_b64)
+        display_message_dict = {
+            "role": "assistant",
+            "title": "Image Generatorの画像生成結果",
+            "icon": "🖼️",
+            "content": "画像生成が完了しました。",
+            "images": images_b64,
+        }
 
         return {
-            "messages": response,
-            "display_message_dict": None,
+            "messages": AIMessage("画像生成が完了しました。"),
+            "display_message_dict": display_message_dict,
         }

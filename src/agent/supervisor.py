@@ -69,8 +69,6 @@ class Supervisor:
             ]
         )
 
-        print(response)
-
         # tool messageをメッセージに追加
         state["messages"].append(response)
 

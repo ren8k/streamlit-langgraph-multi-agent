@@ -61,5 +61,8 @@ def handoff_to_image_generator(
 
     return {
         "goto": "image_generator_subgraph",
-        "update": {"messages": [tool_msg]},
+        "update": {
+            "messages": [tool_msg],
+            "visual_concept": visual_concept,
+        },
     }
