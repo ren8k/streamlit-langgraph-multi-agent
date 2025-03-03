@@ -16,16 +16,16 @@ class ImageGenerator:
 
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(AgentState)
-        graph_builder.add_node(self.create_image_generation_prompt)
+        graph_builder.add_node(self.generate_prompt)
         graph_builder.add_node(self.generate_image)
 
-        graph_builder.set_entry_point("create_image_generation_prompt")
-        graph_builder.add_edge("create_image_generation_prompt", "generate_image")
+        graph_builder.set_entry_point("generate_prompt")
+        graph_builder.add_edge("generate_prompt", "generate_image")
         graph_builder.set_finish_point("generate_image")
 
         return graph_builder.compile()
 
-    def create_image_generation_prompt(self, state: AgentState) -> dict:
+    def generate_prompt(self, state: AgentState) -> dict:
         response = self.llm(
             [
                 (
