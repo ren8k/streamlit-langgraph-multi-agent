@@ -65,7 +65,7 @@ class BedrockImageModel:
         try:
             response = self.client.invoke_model(
                 body=body,
-                modelId="amazon.olympus-image-generator-v1:0",
+                modelId="amazon.nova-canvas-v1:0",
                 accept=accept,
                 contentType=content_type,
             )
