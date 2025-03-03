@@ -12,15 +12,15 @@ class CopyGenerator:
 
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(AgentState)
-        graph_builder.add_node(self.copy_generate)
-        graph_builder.add_node(self.copy_improvement)
+        graph_builder.add_node(self.generate_copy)
+        graph_builder.add_node(self.refine_copy)
 
-        graph_builder.set_entry_point("copy_generate")
-        graph_builder.add_edge("copy_generate", "copy_improvement")
-        graph_builder.set_finish_point("copy_improvement")
+        graph_builder.set_entry_point("generate_copy")
+        graph_builder.add_edge("generate_copy", "refine_copy")
+        graph_builder.set_finish_point("refine_copy")
         return graph_builder.compile()
 
-    def copy_generate(self, state: AgentState) -> dict:
+    def generate_copy(self, state: AgentState) -> dict:
         response = self.llm(
             [
                 (
@@ -53,7 +53,7 @@ class CopyGenerator:
             "display_message_dict": display_message_dict,
         }
 
-    def copy_improvement(self, state: AgentState) -> dict:
+    def refine_copy(self, state: AgentState) -> dict:
         response = self.llm(
             [
                 (
