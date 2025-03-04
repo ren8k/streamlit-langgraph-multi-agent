@@ -8,7 +8,7 @@ from models.bedrock_img_gen_model import BedrockImageModel
 from models.llm import LLM
 from utils.app_util import display_message, display_messages
 
-MODEL = "claude-3-7-sonnet" # you can use "claude-3-5-haiku"
+MODEL = "claude-3-7-sonnet"  # you can use "claude-3-5-haiku"
 IMG_GEN_MODEL = "nova-canvas"
 THREAD_ID = "1"
 TEMPERATURE = 0.2
@@ -19,8 +19,6 @@ def main() -> None:
     st.set_page_config(
         page_title="Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション",
         page_icon="🤖",
-        layout="wide",
-        initial_sidebar_state="auto",
     )
     st.title("Streamlit×LangGraph MultiAgent | 広告素材生成アプリケーション")
 
