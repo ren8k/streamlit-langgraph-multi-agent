@@ -8,7 +8,7 @@ from models.bedrock_img_gen_model import BedrockImageModel
 from models.llm import LLM
 from utils.app_util import display_message, display_messages
 
-MODEL = "claude-3-7-sonnet"
+MODEL = "claude-3-7-sonnet" # you can use "claude-3-5-haiku"
 IMG_GEN_MODEL = "nova-canvas"
 THREAD_ID = "1"
 TEMPERATURE = 0.2
@@ -27,15 +27,11 @@ def main() -> None:
     # Init Actors
     llm = LLM(MODEL, TEMPERATURE)
     bedrock_image_model = BedrockImageModel(IMG_GEN_MODEL)
-
     copy_generator = CopyGenerator(llm)
     image_generator = ImageGenerator(llm, bedrock_image_model)
-
     supervisor = Supervisor(llm, copy_generator, image_generator)
 
-    # Session State
-    if "is_start_chat" not in st.session_state:
-        st.session_state.is_start_chat = False
+    # Set session state
     if "display_messages" not in st.session_state:
         init_display_message_dict = {
             "role": "assistant",
@@ -63,18 +59,14 @@ def main() -> None:
             "content": user_input,
         }
         st.session_state.display_messages.append(display_message_dict)
-        st.session_state.is_start_chat = True
-
-    # Display Messages
-    display_messages(st.session_state.display_messages)
-
-    if not st.session_state.is_start_chat:
+    else:
         st.stop()
+
+    display_messages(st.session_state.display_messages)
 
     # Core Algorithm
     inputs = {"messages": st.session_state.messages + [HumanMessage(user_input)]}
     config = {"configurable": {"thread_id": THREAD_ID}}
-
     supervisor.write_mermaid_graph()
 
     event_prev = {}
@@ -90,8 +82,9 @@ def main() -> None:
             display_message(display_message_dict)
             st.session_state.display_messages.append(display_message_dict)
 
-        # Update Message History
+        # Get the latest message list (cumulative list that updates with each loop)
         messages = event[1].get("messages")
+    # After the loop, add the final message list to the session
     st.session_state.messages.extend(messages)
 
 
