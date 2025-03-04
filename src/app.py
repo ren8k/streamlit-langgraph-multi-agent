@@ -49,6 +49,9 @@ def main() -> None:
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
+    # Display All Messages
+    display_messages(st.session_state.display_messages)
+
     # User Input
     user_input = st.chat_input("メッセージを入力してください:")
     if user_input:
@@ -58,11 +61,10 @@ def main() -> None:
             "icon": "👤",
             "content": user_input,
         }
+        display_message(display_message_dict)
         st.session_state.display_messages.append(display_message_dict)
     else:
         st.stop()
-
-    display_messages(st.session_state.display_messages)
 
     # Core Algorithm
     inputs = {"messages": st.session_state.messages + [HumanMessage(user_input)]}
