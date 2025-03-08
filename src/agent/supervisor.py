@@ -1,5 +1,6 @@
 import json
 
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import Command
@@ -19,6 +20,7 @@ class Supervisor:
         self.tools = [handoff_to_copy_generator, handoff_to_image_generator]
         self.tools_by_name = {tool.name: tool for tool in self.tools}
         self.llm_with_tools = llm.model.bind_tools(self.tools)
+        self.checkpointer = MemorySaver()
         self.graph = self.build_graph(copy_generator, image_generator)
 
     def build_graph(
@@ -32,7 +34,7 @@ class Supervisor:
         graph_builder.add_edge("copy_generator_subgraph", "supervisor")
         graph_builder.add_edge("image_generator_subgraph", "supervisor")
         graph_builder.set_entry_point("supervisor")
-        return graph_builder.compile()
+        return graph_builder.compile(checkpointer=self.checkpointer)
 
     def supervisor(self, state: AgentState) -> Command[
         Literal[

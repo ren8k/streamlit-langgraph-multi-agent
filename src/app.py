@@ -27,7 +27,6 @@ def main() -> None:
     bedrock_image_model = BedrockImageModel(IMG_GEN_MODEL)
     copy_generator = CopyGenerator(llm)
     image_generator = ImageGenerator(llm, bedrock_image_model)
-    supervisor = Supervisor(llm, copy_generator, image_generator)
 
     # Set session state
     if "display_messages" not in st.session_state:
@@ -46,6 +45,8 @@ def main() -> None:
         st.session_state.display_messages = [init_display_message_dict]
     if "messages" not in st.session_state:
         st.session_state.messages = []
+    if "supervisor" not in st.session_state:
+        st.session_state.supervisor = Supervisor(llm, copy_generator, image_generator)
 
     # Display All Messages
     display_messages(st.session_state.display_messages)
@@ -65,12 +66,12 @@ def main() -> None:
         st.stop()
 
     # Core Algorithm
-    inputs = {"messages": st.session_state.messages + [HumanMessage(user_input)]}
+    inputs = {"messages": [HumanMessage(user_input)]}
     config = {"configurable": {"thread_id": THREAD_ID}}
-    supervisor.write_mermaid_graph()
+    st.session_state.supervisor.write_mermaid_graph()
 
     event_prev = {}
-    for event in supervisor.graph.stream(
+    for event in st.session_state.supervisor.graph.stream(
         inputs, config, stream_mode="values", subgraphs=True
     ):
         # Skip when transition between parent and child
