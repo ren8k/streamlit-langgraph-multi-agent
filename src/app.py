@@ -27,9 +27,11 @@ def main() -> None:
     bedrock_image_model = BedrockImageModel(IMG_GEN_MODEL)
     copy_generator = CopyGenerator(llm)
     image_generator = ImageGenerator(llm, bedrock_image_model)
-    supervisor = Supervisor(llm, copy_generator, image_generator)
 
     # Set session state
+    if "supervisor" not in st.session_state:
+        st.session_state.supervisor = Supervisor(llm, copy_generator, image_generator)
+        st.session_state.supervisor.write_mermaid_graph()
     if "display_messages" not in st.session_state:
         init_display_message_dict = {
             "role": "assistant",
@@ -44,8 +46,6 @@ def main() -> None:
             """,
         }
         st.session_state.display_messages = [init_display_message_dict]
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
 
     # Display All Messages
     display_messages(st.session_state.display_messages)
@@ -65,12 +65,11 @@ def main() -> None:
         st.stop()
 
     # Core Algorithm
-    inputs = {"messages": st.session_state.messages + [HumanMessage(user_input)]}
+    inputs = {"messages": [HumanMessage(user_input)]}
     config = {"configurable": {"thread_id": THREAD_ID}}
-    supervisor.write_mermaid_graph()
 
     event_prev = {}
-    for event in supervisor.graph.stream(
+    for event in st.session_state.supervisor.graph.stream(
         inputs, config, stream_mode="values", subgraphs=True
     ):
         # Skip when transition between parent and child
@@ -81,11 +80,6 @@ def main() -> None:
         if display_message_dict := event[1].get("display_message_dict"):
             display_message(display_message_dict)
             st.session_state.display_messages.append(display_message_dict)
-
-        # Get the latest message list (cumulative list that updates with each loop)
-        messages = event[1].get("messages")
-    # After the loop, add the final message list to the session
-    st.session_state.messages.extend(messages)
 
 
 if __name__ == "__main__":
