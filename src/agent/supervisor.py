@@ -51,7 +51,7 @@ class Supervisor:
                     ツール呼び出しの必要がない場合は、ユーザーのサポートを行います。
 
                     - Sub Agent呼び出しが必要あれば、Sub Agentを呼び出してください。その際、なぜそのSub Agentを呼び出すのかの理由も説明してください。
-                    - **Sub Agent呼び出しが不要な場合は、Sub Agentを呼び出す必要はありません。** 
+                    - **Sub Agent呼び出しが不要な場合は、Sub Agentを呼び出す必要はありません。**
                     - 直前にSub Agentを呼び出した場合、Sub Agentの結果を整理して報告してください。
                     """,
                 )
