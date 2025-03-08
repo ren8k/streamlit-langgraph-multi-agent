@@ -31,6 +31,7 @@ def main() -> None:
     # Set session state
     if "supervisor" not in st.session_state:
         st.session_state.supervisor = Supervisor(llm, copy_generator, image_generator)
+        st.session_state.supervisor.write_mermaid_graph()
     if "display_messages" not in st.session_state:
         init_display_message_dict = {
             "role": "assistant",
@@ -66,7 +67,6 @@ def main() -> None:
     # Core Algorithm
     inputs = {"messages": [HumanMessage(user_input)]}
     config = {"configurable": {"thread_id": THREAD_ID}}
-    st.session_state.supervisor.write_mermaid_graph()
 
     event_prev = {}
     for event in st.session_state.supervisor.graph.stream(

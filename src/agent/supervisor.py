@@ -128,5 +128,5 @@ class Supervisor:
     # ================
     def write_mermaid_graph(self) -> None:
         print("Writing graph.md")
-        with open("graph.md", "w") as file:
+        with open("../graph.md", "w") as file:
             file.write(f"```mermaid\n{self.graph.get_graph(xray=1).draw_mermaid()}```")
