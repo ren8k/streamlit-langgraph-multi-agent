@@ -29,6 +29,8 @@ def main() -> None:
     image_generator = ImageGenerator(llm, bedrock_image_model)
 
     # Set session state
+    if "supervisor" not in st.session_state:
+        st.session_state.supervisor = Supervisor(llm, copy_generator, image_generator)
     if "display_messages" not in st.session_state:
         init_display_message_dict = {
             "role": "assistant",
@@ -43,10 +45,6 @@ def main() -> None:
             """,
         }
         st.session_state.display_messages = [init_display_message_dict]
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    if "supervisor" not in st.session_state:
-        st.session_state.supervisor = Supervisor(llm, copy_generator, image_generator)
 
     # Display All Messages
     display_messages(st.session_state.display_messages)
@@ -82,11 +80,6 @@ def main() -> None:
         if display_message_dict := event[1].get("display_message_dict"):
             display_message(display_message_dict)
             st.session_state.display_messages.append(display_message_dict)
-
-        # Get the latest message list (cumulative list that updates with each loop)
-        messages = event[1].get("messages")
-    # After the loop, add the final message list to the session
-    st.session_state.messages.extend(messages)
 
 
 if __name__ == "__main__":
