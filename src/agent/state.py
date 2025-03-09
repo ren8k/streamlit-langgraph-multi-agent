@@ -21,5 +21,5 @@ class AgentState(TypedDict):
     visual_concept: str
     img_prompt: str
 
-    is_finished: bool
+    # for Streamlit Display
     display_message_dict: DisplayMessageDict

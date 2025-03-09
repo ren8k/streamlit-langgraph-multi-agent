@@ -116,12 +116,12 @@ class Supervisor:
                 },
             )
 
-    def end_node(self, state: AgentState) -> Command[Literal[END]]:
+    def end_node(self, state: AgentState) -> Command[Literal["__end__"]]:
         print("Node: end_node" + "\n")
 
         return Command(
             goto=END,
-            update={"is_finished": True, "display_message_dict": None},
+            update={"display_message_dict": None},
         )
 
     # ================
