@@ -1,6 +1,6 @@
-# Streamlit × LangGraph Supervisor型マルチエージェント 広告素材生成アプリケーション
+# LangGraph × Bedrock Supervisor型マルチエージェント 広告素材生成アプリケーション
 
-本レポジトリでは、StreamlitとLangGraphを用いた、Supervisor型マルチエージェントによる簡易的な広告素材生成アプリのサンプルコードを公開している。
+本レポジトリでは、LangGraphとBedrockを用いた、Supervisor型マルチエージェントによる簡易的な広告素材生成アプリのサンプルコードを公開している。
 
 [![デモ動画](./images/demo_movie.gif)](./images/demo_movie.gif)
 
