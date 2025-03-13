@@ -5,8 +5,9 @@
 [![デモ動画](./images/demo_movie.gif)](./images/demo_movie.gif)
 
 ## 特徴
-- **LangGraphによるMulti-Agentの実装**: LangGraphを用いて、Supervisor型マルチエージェントを実装している。
-- **StreamlitによるWebアプリケーション化**: Streamlitを用いて、Webアプリケーション化している。
+- **LangGraphによるMulti-Agentの実装**: 2種類のAgentic WorkflowをSub Agentとして持つSupervisor型のMulti-Agentを実装している。
+- **StreamlitによるWebアプリケーション化**: Agentのメモリ機能を利用し、マルチターンの会話が可能な実装としている。
+- **Amazon Bedrockの利用**: LLMとしてClaude 3.7 Sonnet, 画像生成AIとしてAmazon Nova Canvasを利用している。
 
 ## 使い方
 ### 1. リポジトリのクローン
