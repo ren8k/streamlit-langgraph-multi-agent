@@ -4,6 +4,11 @@
 
 [![デモ動画](./images/demo_movie.gif)](./images/demo_movie.gif)
 
+> [!NOTE]
+> 本アプリおよびの解説記事をQiitaに投稿しています。
+> 是非そちらもご覧下さい！
+> <br> [LangGraph×Bedrockによる複数のAgentic Workflowを利用したSupervisor型マルチエージェントの実装：広告素材作成アプリケーション](https://qiita.com/yamato0811/items/54117737efd4a066531e)
+
 ## 特徴
 - **LangGraphによるMulti-Agentの実装**: 2種類のAgentic WorkflowをSub Agentとして持つSupervisor型のMulti-Agentを実装している。
 - **StreamlitによるWebアプリケーション化**: Agentのメモリ機能を利用し、マルチターンの会話が可能な実装としている。
