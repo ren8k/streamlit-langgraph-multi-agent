@@ -1,12 +1,12 @@
 import base64
 import io
 import json
-from typing import Any, Dict, List
+from typing import Dict, List
 
 import boto3
 from botocore.client import BaseClient
 from botocore.config import Config
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 
 class BedrockImageModel:
@@ -99,9 +99,44 @@ class BedrockImageModel:
     def _create_error_image(self, error_message: str) -> Image.Image:
         """エラーメッセージを表示する画像を生成"""
         img = Image.new("RGB", (512, 512), (180, 180, 180))
-        font = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 13
-        )
         draw = ImageDraw.Draw(img)
-        draw.text((10, 200), error_message, fill="black", font=font)
+
+        # エラーメッセージを複数行に分割
+        wrapped_error_lines = self._wrap_text(error_message, max_chars_per_line=100)
+
+        # 複数行のテキストを描画
+        y_position = 200
+        for line in wrapped_error_lines:
+            draw.text((10, y_position), line, fill="black")
+            y_position += 20  # 行間隔
+
         return img
+
+    def _wrap_text(self, text: str, max_chars_per_line: int = 100) -> List[str]:
+        """テキストを指定した文字数で改行し、複数行のリストを返す
+
+        Args:
+            text: 改行したいテキスト
+            max_chars_per_line: 1行あたりの最大文字数
+
+        Returns:
+            複数行に分割されたテキストのリスト
+        """
+        words = text.split()
+        wrapped_lines = []
+        current_line = ""
+
+        for word in words:
+            # 新しい単語を追加しても最大文字数を超えない場合
+            if len(current_line + " " + word) <= max_chars_per_line:
+                current_line += " " + word if current_line else word
+            else:
+                # 現在の行を追加して新しい行を開始
+                wrapped_lines.append(current_line)
+                current_line = word
+
+        # 最後の行を追加
+        if current_line:
+            wrapped_lines.append(current_line)
+
+        return wrapped_lines
