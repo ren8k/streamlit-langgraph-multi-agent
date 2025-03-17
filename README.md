@@ -14,6 +14,13 @@
 - **StreamlitによるWebアプリケーション化**: Agentのメモリ機能を利用し、マルチターンの会話が可能な実装としている。
 - **Amazon Bedrockの利用**: LLMとしてClaude 3.7 Sonnet, 画像生成AIとしてAmazon Nova Canvasを利用している。
 
+## 実行環境
+
+以下の環境で動作確認済みである。
+
+- OS: Ubuntu 22.04.5 LTS
+- Python: 3.12.5
+
 ## 使い方
 ### 1. リポジトリのクローン
 ```bash
